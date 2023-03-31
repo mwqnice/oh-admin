@@ -1,0 +1,179 @@
+{{define "form"}}
+<style type="text/css">
+	.layui-upload-drag {
+		position: relative;
+		padding: 10px;
+		border: 1px dashed #e2e2e2;
+		background-color: #fff;
+		text-align: center;
+		cursor: pointer;
+		color: #999;
+	}
+</style>
+<form class="layui-form model-form" action="">
+	<input name="id" id="id" type="hidden" value="{{.info.ID}}">
+	<div class="layui-form-item">
+		<label class="layui-form-label">头像：</label>
+		<div class="layui-input-block">
+			<div class="layui-upload-drag">
+				<img id="avatar_show_id" {{if .info.Avatar}} src="{{.info.Avatar}}"{{else}}src="/static/assets/images/default_upload.png"{{end}} alt="上传头像" width="90" height="90">
+				<input type="hidden" id="avatar" name="avatar" value="{{.info.Avatar}}">
+			</div>
+			<div style="margin-top:10px;">
+				<button type="button" class="layui-btn" id="upload_avatar"><i class="layui-icon"></i>上传头像</button>
+			</div><div class="layui-form-mid layui-word-aux">建议尺寸：建议上传尺寸450x450</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">真实姓名：</label>
+			<div class="layui-input-inline">
+				<input name="realname" value="{{.info.Realname}}" lay-verify="required" autocomplete="off" placeholder="请输入真实姓名" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">性别：</label>
+			<div class="layui-input-inline">
+				<select id="gender" name="gender" placeholder="【请选择性别】" lay-filter="gender">
+					<option value="0" >【请选择性别】</option>
+					{{range $key, $val := .genderList}}
+					<option value="{{$key}}" {{if eq $key $.info.Gender}} selected {{end}}>{{$val}}</option>
+					{{end}}
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">用户名：</label>
+			<div class="layui-input-inline">
+				<input name="username" value="{{.info.Username}}" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">密码：</label>
+			<div class="layui-input-inline">
+				<input name="password" placeholder="请输入密码" autocomplete="off" class="layui-input" type="password">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">所属角色：</label>
+		<div class="layui-input-block">
+			{{range $key, $val := .roleList}}
+			<input type="checkbox" name="role_ids[{{$val.ID}}]" {{if eq (in $val.ID $.info.RoleIds) true}} checked {{end}} value="{{$val.ID}}" lay-skin="primary" title="{{$val.Name}}">
+			{{end}}
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">手机号码：</label>
+			<div class="layui-input-inline">
+				<input name="mobile" value="{{.info.Mobile}}" lay-verify="required|phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input" type="tel">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">电子邮箱：</label>
+			<div class="layui-input-inline">
+				<input name="email" value="{{.info.Email}}" lay-verify="required|email" placeholder="请输入邮箱" autocomplete="off" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">地址：</label>
+			<div class="layui-input-inline">
+				<input name="address" value="{{.info.Address}}" lay-verify="required" placeholder="请输入地址" autocomplete="off" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">状态：</label>
+			<div class="layui-input-inline">
+				<input type="hidden" name="status" value="{{.info.Status}}">
+				<input type="checkbox" id="status" {{if eq .info.Status 1}}checked=""{{end}} name="status" lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text" style="width:665px;">
+		<label class="layui-form-label">简介：</label>
+		<div class="layui-input-block">
+			<textarea name="intro" placeholder="请输入简介" class="layui-textarea"> {{.info.Intro}}</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item text-center model-form-footer">
+		<button class="layui-btn" lay-filter="submitForm" lay-submit="">立即保存</button>
+		<button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+	</div>
+</form>
+<script>
+
+	layui.use(['upload','croppers' ],function(){
+		//声明变量
+		var layer = layui.layer
+				,upload = layui.upload
+				,croppers = layui.croppers
+				,$ = layui.$;
+
+		if(1==1) {
+			//图片裁剪组件
+			croppers.render({
+				elem: '#upload_avatar'
+				,name:"avatar"
+				,saveW:450     //保存宽度
+				,saveH:450
+				,mark:1    //选取比例
+				,area:['750px','500px']  //弹窗宽度
+				,url: "/upload/uploadImage"
+				,done: function(url){
+					//上传完毕回调
+					$('#avatar').val(url);
+					$('#avatar_show_id').attr('src',url);
+				}
+			});
+		}else{
+			/**
+			 * 普通图片上传
+			 */
+			var uploadInst = upload.render({
+				elem: '#upload_avatar'
+				,url: "/upload/uploadImage"
+				,accept:'images'
+				,acceptMime:'image/*'
+				,exts: "jpg|png|gif|bmp|jpeg"
+				,field:'file'//文件域字段名
+				,size: 10240 //最大允许上传的文件大小
+				,before: function(obj){
+					//预读本地文件
+				}
+				,done: function(res){
+					//上传完毕回调
+
+					if(res.code != 0){
+						layer.msg(res.msg,{ icon: 5 });
+						return false;
+					}
+
+					//上传成功
+					$('#avatar_show_id').attr('src', res.data.fileUrl);
+					$('#avatar').val(res.data.fileUrl);
+				}
+				,error: function(){
+					//请求异常回调
+					return layer.msg('数据请求异常');
+				}
+			});
+
+		}
+	});
+
+</script>
+<script>
+	layui.use(['form'], function(){
+		var form = layui.form,
+				$ = layui.$;
+
+		form.on('switch(status)', function(data) {
+			$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);})})
+</script>
+{{end}}

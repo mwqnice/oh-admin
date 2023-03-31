@@ -1,0 +1,158 @@
+{{define "form"}}
+<style type="text/css">
+	.layui-iconpicker .layui-anim {
+		display: none;
+		position: absolute;
+		left: 0;
+		top: 42px;
+		padding: 5px 0;
+		z-index: 899;
+		min-width: 150%;
+		border: 1px solid #d2d2d2;
+		max-height: 300px;
+		overflow-y: auto;
+		background-color: #fff;
+		border-radius: 2px;
+		box-shadow: 0 2px 4px rgba(0,0,0,.12);
+		box-sizing: border-box;
+	}
+</style>
+<form class="layui-form model-form" action="">
+	<input name="id" id="id" type="hidden" value="{{.info.ID}}">
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">菜单名称：</label>
+			<div class="layui-input-inline">
+				<input name="name" lay-verify="required" value="{{.info.Name}}" autocomplete="off" placeholder="请输入菜单名称" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">菜单图标：</label>
+			<div class="layui-input-inline">
+				<input type="text" id="icon" name="icon" value="{{.info.Icon}}" lay-filter="icon" style="display:none;">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">URL地址：</label>
+			<div class="layui-input-inline">
+				<input name="url" autocomplete="off"  value="{{.info.Url}}" placeholder="请输入URL地址" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">权限标识：</label>
+			<div class="layui-input-inline">
+				<input name="permission" autocomplete="off" value="{{.info.Permission}}" placeholder="请输入权限标识" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">菜单类型：</label>
+			<div class="layui-input-inline">
+				<select id="type" name="type" placeholder="【请选择菜单类型】" lay-filter="type">
+					<option value="0" >【请选择菜单类型】</option>
+					<option value="0" {{if eq .info.Type 0}} selected {{end}}>菜单</option>
+					<option value="1" {{if eq .info.Type 1}} selected {{end}}>节点</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">上级菜单：</label>
+			<div class="layui-input-inline">
+				<select id="pid" name="pid" placeholder="【请选择上级菜单】" lay-filter="pid">
+					<option value="0" >【请选择上级菜单】</option>
+					{{range $key, $val := .menuTreeList}}
+					<option value="{{$val.ID}}" {{if eq $val.ID $.info.Pid}} selected {{end}}>{{$val.Name}}</option>
+					{{if gt (len $val.Children) 0}}
+					{{range $kk, $vv := $val.Children}}
+					<option value="{{$vv.ID}}" {{if eq $vv.ID $.info.Pid}} selected {{end}}>|--{{$vv.Name}}</option>
+					{{if gt (len $val.Children) 0}}
+					{{range $k, $v := $vv.Children}}
+					<option value="{{$v.ID}}" {{if eq $v.ID $.info.Pid}} selected {{end}}>|--|--{{$v.Name}}</option>
+					{{end}}
+					{{end}}
+					{{end}}
+					{{end}}
+					{{end}}
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+
+		<div class="layui-inline">
+			<label class="layui-form-label">序号：</label>
+			<div class="layui-input-inline">
+				<input name="sort" lay-verify="required|number" value="{{.info.Sort}}" autocomplete="off" placeholder="请输入序号" class="layui-input" type="number">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">是否启用：</label>
+			<div class="layui-input-inline">
+				<input type="hidden" name="status" value="{{.info.Status}}">
+				<input type="checkbox" id="status" {{if eq .info.Status 1}}checked=""{{end}} value="{{.info.Status}}" name="status" lay-skin="switch" lay-filter="status" lay-text="启用|禁用">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">是否显示：</label>
+			<div class="layui-input-inline">
+				<input type="hidden" name="is_show" value="{{.info.IsShow}}">
+				<input type="checkbox" id="is_show" {{if eq .info.IsShow 1}}checked=""{{end}} value="{{.info.IsShow}}" name="is_show" lay-skin="switch" lay-filter="is_show" lay-text="显示|隐藏">
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text" style="width:665px;">
+		<label class="layui-form-label">备注：</label>
+		<div class="layui-input-block">
+			<textarea name="remark" placeholder="请输入备注" class="layui-textarea">{{.info.Remark}}</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item text-center model-form-footer">
+		<button class="layui-btn" lay-filter="submitForm2" lay-submit="">立即保存</button>
+		<button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+	</div>
+</form>
+<script>
+	layui.use(['iconPicker', 'form', 'layer'], function () {
+		var iconPicker = layui.iconPicker,
+				form = layui.form,
+				layer = layui.layer,
+				$ = layui.$;
+
+		iconPicker.render({
+			// 选择器，推荐使用input
+			elem: '#icon',
+			// 数据类型：fontClass/unicode，推荐使用fontClass
+			type: 'fontClass',
+			// 是否开启搜索：true/false，默认true
+			search: true,
+			// 是否开启分页：true/false，默认true
+			page: true,
+			// 每页显示数量，默认12
+			limit: 12,
+			// 每个图标格子的宽度：'43px'或'20%'
+			// cellWidth: '40%',
+			// 点击回调
+			click: function (data) {
+				console.log(data);
+			},
+			// 渲染成功后的回调
+			success: function(d) {
+				console.log(d);
+			}
+		});
+		form.on('switch(status)', function(data) {
+			$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+		});
+		form.on('switch(is_show)', function(data) {
+			$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+		});
+
+	});
+</script>
+{{end}}

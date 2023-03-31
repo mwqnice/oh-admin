@@ -1,0 +1,43 @@
+{{define "form"}}
+<form class="layui-form model-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称：</label>
+        <div class="layui-input-block">
+            <input name="name" lay-verify="required" autocomplete="off" placeholder="请输入角色名称"
+                   class="layui-input" type="text">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色编码：</label>
+        <div class="layui-input-block">
+            <input name="code" lay-verify="required" autocomplete="off" placeholder="请输入角色编码"
+                   class="layui-input" type="text">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色状态：</label>
+        <div class="layui-input-block">
+            <input type="checkbox" id="status" checked="" value="1" name="status" lay-skin="switch" lay-filter="status" lay-text="开启|禁用">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">序号：</label>
+        <div class="layui-input-block">
+            <input name="sort" lay-verify="required|number" autocomplete="off"
+                   placeholder="请输入序号" class="layui-input" type="text">
+        </div>
+    </div>
+    <div class="layui-form-item text-center model-form-footer">
+        <button class="layui-btn" lay-filter="submitForm" lay-submit="">立即保存</button>
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+    </div>
+</form>
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form,
+            $ = layui.$;
+
+        form.on('switch(status)', function(data) {
+            $(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);})})
+</script>
+{{end}}

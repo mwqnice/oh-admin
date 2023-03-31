@@ -1,0 +1,47 @@
+{{define "content"}}
+<!-- 功能操作区一 -->
+<form class="layui-form toolbar">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label w-auto">菜单名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" id="keywords" placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline" style="width: auto;">
+                    <button class="layui-btn" lay-submit="" lay-filter="searchForm" id="search"><i class="layui-icon"></i>查询</button>
+                    <a href="javascript:" class="layui-btn btnOption  layui-btn-small btnadd" id="add" data-param="{}" lay-event="add"><i class="layui-icon layui-icon-add-1"></i> 添加菜单</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- TREE渲染区 -->
+<!--<table id="tableList" class="layui-hide" lay-filter="tableList"></table>-->
+<table class="layui-table" lay-filter="tableList">
+    <thead>
+    <tr>
+        <th>昵称</th>
+        <th>积分</th>
+        <th>签名</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>张三1</td>
+        <td>66</td>
+        <td>人生就像是一场修行a</td>
+    </tr>
+
+
+    </tbody>
+</table>
+<div class="layui-box layui-laypage layui-laypage-default" >
+{{.page | safe}}
+</div>
+<!-- 操作功能区二 -->
+<script type="text/html" id="toolBar">
+
+</script>
+{{end}}

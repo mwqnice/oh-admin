@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<!-- 引入头部 -->
+{{template "header" .}}
+<body>
+
+<!-- 主体部分开始 -->
+<!-- 正文开始 -->
+<div class="layui-fluid" style="padding-bottom: 0;">
+    <div class="layui-row layui-col-space15">
+        {{block "content" .}}{{end}}
+    </div>
+</div>
+<!-- 主体部分结束 -->
+
+<!-- 引入脚部 -->
+{{template "footer" .}}
+</body>
+</html>
